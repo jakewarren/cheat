@@ -13,6 +13,10 @@ cheat -s <command>
 # To get the current `cheat' version
 cheat -v
 
+# Formatting changes
+## Second level headers are colorized purple
+### Third level headers are colorized cyan
+
 #-- snippet
 mommy wow! I'm a snippet now!
 #--#
