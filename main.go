@@ -347,7 +347,7 @@ func colorizeLine(l string) string {
 
 func highlightHyperlinks(l string) string {
 	// highlight hyperlinks
-	var re = regexp.MustCompile(`https?://[\w./-]+`)
+	var re = regexp.MustCompile(`https?://.*`)
 	if re.MatchString(l) {
 		link := re.FindString(l)
 		const escape = "\x1b"
