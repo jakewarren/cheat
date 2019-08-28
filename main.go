@@ -21,7 +21,6 @@ import (
 )
 
 func main() {
-
 	editCheatSheet := pflag.BoolP("edit", "e", false, "Edit cheatsheet")
 	listCheatSheet := pflag.BoolP("list", "l", false, "List cheatsheets")
 	searchCheatSheet := pflag.StringP("search", "s", "", "Search cheatsheet")
@@ -51,9 +50,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	var cmdname = pflag.Arg(0)
+	cmdname := pflag.Arg(0)
 
-	var cheatfile = locateCheatSheet(config, cmdname)
+	cheatfile := locateCheatSheet(config, cmdname)
 
 	if len(*searchCheatSheet) > 0 {
 		err := searchCheatFile(cheatfile, *searchCheatSheet)
@@ -81,8 +80,8 @@ func main() {
 	if err != nil {
 		log.Error().Err(err).Msg("error printing cheatsheet")
 	}
-
 }
+
 func listCheatSheets(cheatdirs []string) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 4, 4, ' ', 0)
 
@@ -108,7 +107,6 @@ func listCheatSheets(cheatdirs []string) {
 }
 
 func searchAllCheatSheets(cheatdirs []string, searchterm string) {
-
 	for _, dir := range cheatdirs {
 		files, err := ioutil.ReadDir(dir)
 		if err != nil {
@@ -129,7 +127,6 @@ func searchAllCheatSheets(cheatdirs []string, searchterm string) {
 		}
 
 	}
-
 }
 
 func locateCheatSheet(config *JSONData, cmdname string) string {
@@ -142,7 +139,6 @@ func locateCheatSheet(config *JSONData, cmdname string) string {
 }
 
 func searchCheatFile(cheatfile, searchterm string) error {
-
 	file, err := os.Open(cheatfile)
 	if err != nil {
 		return errors.Wrap(err, "error opening cheat file")
@@ -203,7 +199,6 @@ func string2Blocks(in []byte) [][]string {
 }
 
 func editCheat(cheatfile string, config *JSONData) error {
-
 	cheatFileDir := filepath.Dir(cheatfile)
 	cheatFileName := filepath.Base(cheatfile)
 
@@ -237,7 +232,6 @@ func editCheat(cheatfile string, config *JSONData) error {
 
 	// open the editor
 	editor, err := exec.LookPath(config.Editor)
-
 	if err != nil {
 		return errors.Wrap(err, "editor not found")
 	}
@@ -250,7 +244,6 @@ func editCheat(cheatfile string, config *JSONData) error {
 }
 
 func printCheatFile(cheatfile string) error {
-
 	file, err := os.Open(cheatfile)
 	if err != nil {
 		return errors.Wrap(err, "error opening cheat file")
@@ -314,7 +307,6 @@ func pretty(s string) string {
 }
 
 func colorizeLine(l string) string {
-
 	if len(l) == 0 {
 		return l
 	}
@@ -326,6 +318,10 @@ func colorizeLine(l string) string {
 
 	switch l[0] {
 	case '#':
+		if len(l) == 1 {
+			l = "-"
+			break
+		}
 		switch l[1] {
 		case '#':
 			switch l[2] {
@@ -347,7 +343,7 @@ func colorizeLine(l string) string {
 
 func highlightHyperlinks(l string) string {
 	// highlight hyperlinks
-	var re = regexp.MustCompile(`https?://.*`)
+	re := regexp.MustCompile(`https?://.*`)
 	if re.MatchString(l) {
 		link := re.FindString(l)
 		const escape = "\x1b"
