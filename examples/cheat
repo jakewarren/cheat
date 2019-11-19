@@ -8,18 +8,18 @@ cheat -e <command>
 cheat -l
 
 # To search specific cheatsheet for a search term
-cheat -s <command> <search term regex>
+cheat -s <search term regex> <command>
 
 # To search all available cheatsheets
 cheat -s <search term regex>
 
 # To get the current `cheat' version
-cheat -v
+cheat -V
 
 # Formatting headers
 ## Second level headers are colorized purple
 ### Third level headers are colorized cyan
 
-#-- snippet
-mommy wow! I'm a snippet now!
+#-- snippet title
+content inside here gets formatted into a snippet
 #--#

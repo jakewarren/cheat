@@ -19,7 +19,7 @@ type JSONData struct {
 var defaults = `{
     "highlight": true,
     "cheatdirs": [
-        "~/.cheatsheets"
+        "~/.cheat"
     ],
     "editor": "vim"
 }`
@@ -35,8 +35,8 @@ func (q *JSONData) ReadConfig() error {
 		settings, _ = ioutil.ReadFile(rcfile)
 	}
 
-	//Umarshalling JSON into struct
-	var data = &q
+	// Umarshalling JSON into struct
+	data := &q
 	err := json.Unmarshal(settings, data)
 	if err != nil {
 		return err

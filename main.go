@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"text/tabwriter"
 
@@ -20,11 +21,68 @@ import (
 	"github.com/spf13/pflag"
 )
 
+var (
+	// build information set by ldflags
+	appName   = "cheat"
+	version   = "(ﾉ☉ヮ⚆)ﾉ ⌒*:･ﾟ✧"
+	commit    = "(ﾉ☉ヮ⚆)ﾉ ⌒*:･ﾟ✧"
+	buildDate = "(ﾉ☉ヮ⚆)ﾉ ⌒*:･ﾟ✧"
+)
+
+const usageMessage = `Usage: cheat [flags] [<command>]`
+
+const usageExample = `Examples:
+	- To see example usage of a program:
+	cheat <command>
+	
+	- To edit a cheatsheet
+	cheat -e <command>
+	
+	- To list available cheatsheets
+	cheat -l
+	
+	- To search specific cheatsheet for a search term
+	cheat -s <search term regex> <command>
+	
+	- To search all available cheatsheets
+	cheat -s <search term regex>`
+
 func main() {
+	pflag.Usage = func() {
+		_, _ = fmt.Fprintln(os.Stderr, usageMessage)
+		_, _ = fmt.Fprintln(os.Stderr, "")
+		_, _ = fmt.Fprintln(os.Stderr, "Flags:")
+		pflag.PrintDefaults()
+		_, _ = fmt.Fprintln(os.Stderr, "")
+		_, _ = fmt.Fprintln(os.Stderr, usageExample)
+		_, _ = fmt.Fprintln(os.Stderr, "")
+		_, _ = fmt.Fprintln(os.Stderr, "URL: https://github.com/jakewarren/cheat")
+	}
+
 	editCheatSheet := pflag.BoolP("edit", "e", false, "Edit cheatsheet")
 	listCheatSheet := pflag.BoolP("list", "l", false, "List cheatsheets")
 	searchCheatSheet := pflag.StringP("search", "s", "", "Search cheatsheet")
+	displayHelp := pflag.BoolP("help", "h", false, "display help")
+	displayVersion := pflag.BoolP("version", "V", false, "display version information")
 	pflag.Parse()
+
+	// override the default usage display
+	if *displayHelp {
+		pflag.Usage()
+		os.Exit(0)
+	}
+
+	if *displayVersion {
+		fmt.Printf(`%s:
+    version     : %s
+    git hash    : %s
+    build date  : %s 
+    go version  : %s
+    go compiler : %s
+    platform    : %s/%s
+`, appName, version, commit, buildDate, runtime.Version(), runtime.Compiler, runtime.GOOS, runtime.GOARCH)
+		os.Exit(0)
+	}
 
 	config := &JSONData{}
 	configErr := config.ReadConfig()
@@ -48,6 +106,11 @@ func main() {
 	if len(pflag.Args()) == 0 {
 		pflag.Usage()
 		os.Exit(0)
+	}
+
+	// disable color if the user requests it
+	if config.Highlight == false {
+		color.NoColor = true
 	}
 
 	cmdname := pflag.Arg(0)
@@ -161,8 +224,7 @@ func searchCheatFile(cheatfile, searchterm string) error {
 	for _, b := range blocks {
 		t := strings.Join(b, "\n")
 		if r.MatchString(t) {
-			result = append(result, t)
-			result = append(result, "")
+			result = append(result, t, "")
 		}
 	}
 
@@ -266,7 +328,7 @@ func pretty(s string) string {
 	scanner := bufio.NewScanner(strings.NewReader(s))
 	for scanner.Scan() {
 		l := scanner.Text()
-		if len(lastLine) > 0 && lastLine[0] == '-' && len(l) == 0 {
+		if len(lastLine) > 0 && lastLine[0] == '-' && l == "" {
 			continue
 		}
 		lastLine = l
@@ -307,21 +369,25 @@ func pretty(s string) string {
 }
 
 func colorizeLine(l string) string {
-	if len(l) == 0 {
+	if l == "" {
 		return l
 	}
 
-	switch rune(l[0]) {
-	case '┃':
+	if rune(l[0]) == '┃' {
 		l = l[1:]
 	}
 
 	switch l[0] {
 	case '#':
+		// skip empty comment lines
 		if len(l) == 1 {
 			l = "-"
 			break
 		}
+		// colorize comments based on the number of comment markers, allowing control over the colorization
+		// 	# First level colorized yellow
+		//  ## Second level colorized purple
+		//  ### Third level colorized cyan
 		switch l[1] {
 		case '#':
 			switch l[2] {
