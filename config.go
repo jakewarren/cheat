@@ -30,7 +30,10 @@ func (q *JSONData) ReadConfig() error {
 
 	settings := []byte(defaults)
 	if _, err := os.Stat(rcfile); os.IsNotExist(err) {
-		ioutil.WriteFile(rcfile, []byte(defaults), 0777)
+		writeErr := ioutil.WriteFile(rcfile, []byte(defaults), 0777)
+		if writeErr != nil {
+			return writeErr
+		}
 	} else {
 		settings, _ = ioutil.ReadFile(rcfile)
 	}

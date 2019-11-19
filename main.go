@@ -1,3 +1,4 @@
+//nolint:funlen
 package main
 
 import (
@@ -109,7 +110,7 @@ func main() {
 	}
 
 	// disable color if the user requests it
-	if config.Highlight == false {
+	if !config.Highlight {
 		color.NoColor = true
 	}
 
@@ -126,7 +127,6 @@ func main() {
 	}
 
 	if *editCheatSheet {
-
 		err := editCheat(cheatfile, config)
 		if err != nil {
 			log.Error().Err(err).Msg("error editing cheatsheet")
@@ -155,7 +155,6 @@ func listCheatSheets(cheatdirs []string) {
 		}
 
 		for _, f := range files {
-
 			// exclude python files like __init__.py
 			if strings.HasPrefix(f.Name(), "__") {
 				continue
@@ -163,7 +162,6 @@ func listCheatSheets(cheatdirs []string) {
 
 			fmt.Fprintf(w, "%s\t%s\n", f.Name(), filepath.Join(dir, f.Name()))
 		}
-
 	}
 
 	w.Flush()
@@ -177,7 +175,6 @@ func searchAllCheatSheets(cheatdirs []string, searchterm string) {
 		}
 
 		for _, f := range files {
-
 			// exclude python files like __init__.py
 			if strings.HasPrefix(f.Name(), "__") {
 				continue
@@ -186,9 +183,7 @@ func searchAllCheatSheets(cheatdirs []string, searchterm string) {
 			if searchErr := searchCheatFile(filepath.Join(dir, f.Name()), searchterm); searchErr != nil {
 				log.Error().Err(searchErr).Str("file", filepath.Join(dir, f.Name())).Msg("error searching cheat file")
 			}
-
 		}
-
 	}
 }
 
@@ -289,7 +284,6 @@ func editCheat(cheatfile string, config *JSONData) error {
 		if err != nil {
 			return err
 		}
-
 	}
 
 	// open the editor
@@ -333,10 +327,8 @@ func pretty(s string) string {
 		}
 		lastLine = l
 		if len(l) > 0 {
-
 			// look for our snippet syntax start
 			if len(l) > 3 && l[0:3] == "#--" {
-
 				// print the snippet header
 				l = "┏━━━〘" + l[4:] + " 〙━━●"
 				l = color.YellowString(l)
@@ -355,7 +347,6 @@ func pretty(s string) string {
 					l = color.YellowString("┃") + colorizeLine(l)
 
 					prettyLines = append(prettyLines, l)
-
 				}
 
 				continue
@@ -415,7 +406,6 @@ func highlightHyperlinks(l string) string {
 		const escape = "\x1b"
 		link = fmt.Sprintf("%s[%dm", escape, 4) + link + fmt.Sprintf("%s[%dm", escape, 24)
 		l = re.ReplaceAllString(l, link)
-
 	}
 	return l
 }
