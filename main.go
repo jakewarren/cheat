@@ -344,7 +344,7 @@ func pretty(s string) string {
 					}
 
 					// format the body of the snippet
-					l = color.YellowString("┃") + colorizeLine(l)
+					l = colorizeLine(l)
 
 					prettyLines = append(prettyLines, l)
 				}
