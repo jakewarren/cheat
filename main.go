@@ -380,6 +380,9 @@ func colorizeLine(l string) string {
 		//  ## Second level colorized purple
 		//  ### Third level colorized cyan
 		switch l[1] {
+		// skip over shebangs (#!), don't colorize them
+		case '!':
+			break
 		case '#':
 			switch l[2] {
 			case '#':
@@ -390,9 +393,6 @@ func colorizeLine(l string) string {
 		default:
 			l = "-" + color.YellowString(highlightHyperlinks(l[1:]))
 		}
-
-	default:
-		l = "  " + l
 	}
 
 	return l
