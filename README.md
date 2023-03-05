@@ -1,5 +1,5 @@
 # cheat
-[![CircleCI](https://circleci.com/gh/jakewarren/cheat.svg?style=shield)](https://circleci.com/gh/jakewarren/cheat)
+[![Build Status](https://github.com/jakewarren/cheat/workflows/lint/badge.svg)](https://github.com/jakewarren/cheat/actions)
 [![GitHub release](http://img.shields.io/github/release/jakewarren/cheat.svg?style=flat-square)](https://github.com/jakewarren/cheat/releases])
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/jakewarren/cheat/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jakewarren/cheat)](https://goreportcard.com/report/github.com/jakewarren/cheat)
