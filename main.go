@@ -330,7 +330,7 @@ func pretty(s string) string {
 			// look for our snippet syntax start
 			if len(l) > 3 && l[0:3] == "#--" {
 				// print the snippet header
-				l = "┏━━━〘" + l[4:] + " 〙━━●"
+				l = "┏━━━〘 " + l[4:] + " 〙━━●"
 				l = color.YellowString(l)
 				prettyLines = append(prettyLines, l)
 
